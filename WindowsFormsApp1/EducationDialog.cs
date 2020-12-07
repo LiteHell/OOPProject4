@@ -12,11 +12,22 @@ namespace WindowsFormsApp1
 {
     public partial class EducationDialog : Form
     {
-        public Data.Education Education { get; set; }
+        private Data.Education education;
+
+        public Data.Education GetEducation()
+        {
+            return education;
+        }
+
+        public void SetEducation(Data.Education value)
+        {
+            education = value;
+        }
+
         public EducationDialog()
         {
             InitializeComponent();
-            Education = new Data.Education();
+            SetEducation(new Data.Education());
             this.Load += EducationDialog_Load;
         }
 
@@ -27,7 +38,7 @@ namespace WindowsFormsApp1
 
         private void LoadEducation()
         {
-            switch (Education.SchoolType)
+            switch (GetEducation().GetSchoolType())
             {
                 case Data.SchoolType.HighSchool:
                     radio_highSchool.Checked = true;
@@ -39,7 +50,7 @@ namespace WindowsFormsApp1
                     radio_graduateSchool.Checked = true;
                     break;
             }
-            switch (Education.Status)
+            switch (GetEducation().GetStatus())
             {
                 case Data.SchoolRegistrationType.Enrolled:
                     comboBox_Status.SelectedIndex = 0;
@@ -57,63 +68,63 @@ namespace WindowsFormsApp1
                     comboBox_Status.SelectedIndex = 4;
                     break;
             }
-            txt_schoolName.Text = Education.SchoolName;
-            txt_schoolYear.Text = Education.SchoolYear.ToString();
-            dateTime_admissionDate.Value = Education.EnrolledAt;
-            dateTime_graduationDate.Value = Education.GraduatedAt;
-            if (Education.SchoolType != Data.SchoolType.HighSchool)
+            txt_schoolName.Text = GetEducation().GetSchoolName();
+            txt_schoolYear.Text = GetEducation().GetSchoolYear().ToString();
+            dateTime_admissionDate.Value = GetEducation().GetEnrolledAt();
+            dateTime_graduationDate.Value = GetEducation().GetGraduatedAt();
+            if (GetEducation().GetSchoolType() != Data.SchoolType.HighSchool)
             {
-                Data.HigherEducation higherEducation = (Data.HigherEducation)Education;
-                txt_degreeName.Text = higherEducation.DegreeName;
-                txt_major.Text = higherEducation.Major;
-                txt_gpa.Text = higherEducation.GPA.ToString();
-                txt_maxGpa.Text = higherEducation.MaximumGPA.ToString();
+                Data.HigherEducation higherEducation = (Data.HigherEducation)GetEducation();
+                txt_degreeName.Text = higherEducation.GetDegreeName();
+                txt_major.Text = higherEducation.GetMajor();
+                txt_gpa.Text = higherEducation.GetGPA().ToString();
+                txt_maxGpa.Text = higherEducation.GetMaximumGPA().ToString();
             }
 
         }
         private void button2_Click(object sender, EventArgs e)
         {
             if (radio_highSchool.Checked)
-                Education.SchoolType = Data.SchoolType.HighSchool;
+                GetEducation().SetSchoolType(Data.SchoolType.HighSchool);
             else if (radio_University.Checked)
-                Education.SchoolType = Data.SchoolType.University;
+                GetEducation().SetSchoolType(Data.SchoolType.University);
             else if (radio_graduateSchool.Checked)
-                Education.SchoolType = Data.SchoolType.GraduateSchool;
-            if (Education.SchoolType != Data.SchoolType.HighSchool)
+                GetEducation().SetSchoolType(Data.SchoolType.GraduateSchool);
+            if (GetEducation().GetSchoolType() != Data.SchoolType.HighSchool)
             {
                 Data.HigherEducation higherEducation = new Data.HigherEducation();
-                higherEducation.SchoolType = Education.SchoolType;
-                higherEducation.DegreeName = txt_degreeName.Text;
-                higherEducation.Major = txt_major.Text;
+                higherEducation.SetSchoolType(GetEducation().GetSchoolType());
+                higherEducation.SetDegreeName(txt_degreeName.Text);
+                higherEducation.SetMajor(txt_major.Text);
                 if (float.TryParse(txt_gpa.Text, out float gpa))
-                    higherEducation.GPA = gpa;
+                    higherEducation.SetGPA(gpa);
                 if (float.TryParse(txt_maxGpa.Text, out float maxGpa))
-                    higherEducation.MaximumGPA = maxGpa;
-                Education = higherEducation;
+                    higherEducation.SetMaximumGPA(maxGpa);
+                SetEducation(higherEducation);
             }
             switch (comboBox_Status.SelectedIndex)
             {
                 case 0:
-                    Education.Status = Data.SchoolRegistrationType.Enrolled;
+                    GetEducation().SetStatus(Data.SchoolRegistrationType.Enrolled);
                     break;
                 case 1:
-                    Education.Status = Data.SchoolRegistrationType.LeaveOfAbsence;
+                    GetEducation().SetStatus(Data.SchoolRegistrationType.LeaveOfAbsence);
                     break;
                 case 2:
-                    Education.Status = Data.SchoolRegistrationType.Completed;
+                    GetEducation().SetStatus(Data.SchoolRegistrationType.Completed);
                     break;
                 case 3:
-                    Education.Status = Data.SchoolRegistrationType.Graduated;
+                    GetEducation().SetStatus(Data.SchoolRegistrationType.Graduated);
                     break;
                 case 4:
-                    Education.Status = Data.SchoolRegistrationType.Expelled;
+                    GetEducation().SetStatus(Data.SchoolRegistrationType.Expelled);
                     break;
             }
-            Education.SchoolName = txt_schoolName.Text;
+            GetEducation().SetSchoolName(txt_schoolName.Text);
             if (int.TryParse(txt_schoolYear.Text, out int schoolYear))
-                Education.SchoolYear = schoolYear;
-            Education.EnrolledAt = dateTime_admissionDate.Value;
-            Education.GraduatedAt = dateTime_graduationDate.Value;
+                GetEducation().SetSchoolYear(schoolYear);
+            GetEducation().SetEnrolledAt(dateTime_admissionDate.Value);
+            GetEducation().SetGraduatedAt(dateTime_graduationDate.Value);
             this.DialogResult = DialogResult.OK;
             this.Close();
         }

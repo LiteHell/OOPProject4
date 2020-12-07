@@ -12,16 +12,16 @@ namespace WindowsFormsApp1
     {
         private static int CompareEducation(Data.Education a, Data.Education b)
         {
-            if (a.GraduatedAt > b.GraduatedAt)
+            if (a.GetGraduatedAt() > b.GetGraduatedAt())
                 return 1;
-            else if (a.GraduatedAt < b.GraduatedAt)
+            else if (a.GetGraduatedAt() < b.GetGraduatedAt())
                 return -1;
-            else if (a.EnrolledAt > b.EnrolledAt)
+            else if (a.GetEnrolledAt() > b.GetEnrolledAt())
                 return 1;
-            else if (a.EnrolledAt < b.EnrolledAt)
+            else if (a.GetEnrolledAt() < b.GetEnrolledAt())
                 return -1;
             else
-                return a.SchoolName.CompareTo(b.SchoolName);
+                return a.GetSchoolName().CompareTo(b.GetSchoolName());
         }
         public Data.Resume GetResume()
         {
@@ -38,7 +38,7 @@ namespace WindowsFormsApp1
         }
         public void SetResume(Data.Resume resume)
         {
-            resume.Educations.Sort(CompareEducation);
+            resume.GetEducations().Sort(CompareEducation);
             using (FileStream fs = File.OpenWrite("resume.dat"))
             {
                 BinaryFormatter formatter = new BinaryFormatter();

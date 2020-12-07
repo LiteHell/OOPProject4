@@ -88,7 +88,7 @@ namespace WindowsFormsApp1
             inputBox.SetDescription("새로 만들 자기소개서 이름을 입력하세요.");
             if (inputBox.ShowDialog() == DialogResult.OK)
             {
-                string name = inputBox.Result;
+                string name = inputBox.GetResult();
                 if (name.Any((char i) => System.IO.Path.GetInvalidFileNameChars().Contains(i))) {
                     MessageBox.Show("잘못된 이름입니다.", "오류", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;

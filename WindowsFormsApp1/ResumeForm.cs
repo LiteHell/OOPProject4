@@ -29,30 +29,30 @@ namespace WindowsFormsApp1
         private void LoadResume()
         {
             Resume resume = manager.GetResume();
-            txt_addr.Text = resume.Address;
-            txt_email.Text = resume.Email;
-            txt_name.Text = resume.Name;
-            txt_phone.Text = resume.PhoneNumber;
-            txt_tel.Text = resume.Telephone;
-            dateTime_birthday.Value = resume.Birthday;
-            if (resume.Picture != null)
-                image_picture.Image = resume.Picture;
+            txt_addr.Text = resume.GetAddress();
+            txt_email.Text = resume.GetEmail();
+            txt_name.Text = resume.GetName();
+            txt_phone.Text = resume.GetPhoneNumber();
+            txt_tel.Text = resume.GetTelephone();
+            dateTime_birthday.Value = resume.GetBirthday();
+            if (resume.GetPicture() != null)
+                image_picture.Image = resume.GetPicture();
 
             // 학력
             listView1.BeginUpdate();
             listView1.Items.Clear();
             int realIndex = 0;
-            foreach(Education i in resume.Educations)
+            foreach(Education i in resume.GetEducations())
             {
                 ListViewItem item = new ListViewItem();
-                item.Text = i.SchoolName;
-                if (i.SchoolType == SchoolType.HighSchool)
+                item.Text = i.GetSchoolName();
+                if (i.GetSchoolType() == SchoolType.HighSchool)
                 {
-                    item.SubItems.AddRange(new string[] { "(고졸)", "(고졸)", "(고졸)", i.EnrolledAt.ToShortDateString(), i.GraduatedAt.ToShortDateString() });
+                    item.SubItems.AddRange(new string[] { "(고졸)", "(고졸)", "(고졸)", i.GetEnrolledAt().ToShortDateString(), i.GetGraduatedAt().ToShortDateString() });
                 } else
                 {
                     HigherEducation higherI = (HigherEducation)i;
-                    item.SubItems.AddRange(new string[] {  higherI.DegreeName, higherI.Major, $"{higherI.GPA}/{higherI.MaximumGPA}", i.EnrolledAt.ToShortDateString(), i.GraduatedAt.ToShortDateString() });
+                    item.SubItems.AddRange(new string[] {  higherI.GetDegreeName(), higherI.GetMajor(), $"{higherI.GetGPA()}/{higherI.GetMaximumGPA()}", i.GetEnrolledAt().ToShortDateString(), i.GetGraduatedAt().ToShortDateString() });
                 }
                 item.Tag = realIndex++;
                 listView1.Items.Add(item);
@@ -63,11 +63,11 @@ namespace WindowsFormsApp1
             realIndex = 0;
             listView2.BeginUpdate();
             listView2.Items.Clear();
-            foreach (Qualification i in resume.Certificates)
+            foreach (Qualification i in resume.GetCertificates())
             {
                 ListViewItem item = new ListViewItem();
-                item.Text = i.Name;
-                item.SubItems.AddRange(new string[] { i.AwardingInstitution, i.AcquisitiedAt.ToShortDateString(), i.ValidForever ? "" : i.ValidUntil.ToShortDateString() });
+                item.Text = i.GetName();
+                item.SubItems.AddRange(new string[] { i.GetAwardingInstitution(), i.GetAcquisitiedAt().ToShortDateString(), i.GetValidForever() ? "" : i.GetValidUntil().ToShortDateString() });
                 item.Tag = realIndex++;
                 listView2.Items.Add(item);
             }
@@ -77,11 +77,11 @@ namespace WindowsFormsApp1
             realIndex = 0;
             listView3.BeginUpdate();
             listView3.Items.Clear();
-            foreach (Career i in resume.Careers)
+            foreach (Career i in resume.GetCareers())
             {
                 ListViewItem item = new ListViewItem();
-                item.Text = i.CompanyName;
-                item.SubItems.AddRange(new string[] { i.Position, i.Responsibilities, i.WorkedSince.ToShortDateString(), i.WorkedUntil.ToShortDateString() });
+                item.Text = i.GetCompanyName();
+                item.SubItems.AddRange(new string[] { i.GetPosition(), i.GetResponsibilities(), i.GetWorkedSince().ToShortDateString(), i.GetWorkedUntil().ToShortDateString() });
                 item.Tag = realIndex++;
                 listView3.Items.Add(item);
             }
@@ -91,12 +91,12 @@ namespace WindowsFormsApp1
         private void SaveResumeHandler(object sender, EventArgs e)
         {
             Resume resume = manager.GetResume();
-            resume.Address = txt_addr.Text;
-            resume.Email = txt_email.Text;
-            resume.Name = txt_name.Text;
-            resume.Telephone = txt_tel.Text;
-            resume.PhoneNumber = txt_phone.Text;
-            resume.Birthday = dateTime_birthday.Value;
+            resume.SetAddress(txt_addr.Text);
+            resume.SetEmail(txt_email.Text);
+            resume.SetName(txt_name.Text);
+            resume.SetTelephone(txt_tel.Text);
+            resume.SetPhoneNumber(txt_phone.Text);
+            resume.SetBirthday(dateTime_birthday.Value);
             manager.SetResume(resume);
         }
 
@@ -112,7 +112,7 @@ namespace WindowsFormsApp1
             {
                 Image image = Image.FromFile(openFileDialog.FileName);
                 Resume resume = manager.GetResume();
-                resume.Picture = image;
+                resume.SetPicture(image);
                 image_picture.Image = image;
                 manager.SetResume(resume);
             }
@@ -125,7 +125,7 @@ namespace WindowsFormsApp1
             if (result == DialogResult.OK)
             {
                 Resume resume = manager.GetResume();
-                resume.Educations.Add(dialog.Education);
+                resume.GetEducations().Add(dialog.GetEducation());
                 manager.SetResume(resume);
                 LoadResume();
             }
@@ -136,7 +136,7 @@ namespace WindowsFormsApp1
             if (listView1.SelectedItems.Count != 0)
             {
                 Resume resume = manager.GetResume();
-                resume.Educations.RemoveAt((int)listView1.SelectedItems[0].Tag);
+                resume.GetEducations().RemoveAt((int)listView1.SelectedItems[0].Tag);
                 manager.SetResume(resume);
                 LoadResume();
             }
@@ -151,11 +151,11 @@ namespace WindowsFormsApp1
             EducationDialog dialog = new EducationDialog();
             Resume resume = manager.GetResume();
             int selectedIndex = (int)listView1.SelectedItems[0].Tag;
-            dialog.Education = resume.Educations[selectedIndex];
+            dialog.SetEducation(resume.GetEducations()[selectedIndex]);
             DialogResult result = dialog.ShowDialog();
             if (result == DialogResult.OK)
             {
-                resume.Educations[selectedIndex] = dialog.Education;
+                resume.GetEducations()[selectedIndex] = dialog.GetEducation();
                 manager.SetResume(resume);
                 LoadResume();
             }
@@ -169,7 +169,7 @@ namespace WindowsFormsApp1
             if (result == DialogResult.OK)
             {
                 Resume resume = manager.GetResume();
-                resume.Certificates.Add(dialog.Qualification);
+                resume.GetCertificates().Add(dialog.GetQualification());
                 manager.SetResume(resume);
                 LoadResume();
             }
@@ -181,7 +181,7 @@ namespace WindowsFormsApp1
             if (listView2.SelectedItems.Count != 0)
             {
                 Resume resume = manager.GetResume();
-                resume.Certificates.RemoveAt((int)listView2.SelectedItems[0].Tag);
+                resume.GetCertificates().RemoveAt((int)listView2.SelectedItems[0].Tag);
                 manager.SetResume(resume);
                 LoadResume();
             }
@@ -198,11 +198,11 @@ namespace WindowsFormsApp1
             QualificationDialog dialog = new QualificationDialog();
             Resume resume = manager.GetResume();
             int selectedIndex = (int)listView2.SelectedItems[0].Tag;
-            dialog.Qualification = resume.Certificates[selectedIndex];
+            dialog.SetQualification(resume.GetCertificates()[selectedIndex]);
             DialogResult result = dialog.ShowDialog();
             if (result == DialogResult.OK)
             {
-                resume.Certificates[selectedIndex] = dialog.Qualification;
+                resume.GetCertificates()[selectedIndex] = dialog.GetQualification();
                 manager.SetResume(resume);
                 LoadResume();
             }
@@ -215,7 +215,7 @@ namespace WindowsFormsApp1
             if (result == DialogResult.OK)
             {
                 Resume resume = manager.GetResume();
-                resume.Careers.Add(dialog.Career);
+                resume.GetCareers().Add(dialog.GetCareer());
                 manager.SetResume(resume);
                 LoadResume();
             }
@@ -227,7 +227,7 @@ namespace WindowsFormsApp1
             if (listView3.SelectedItems.Count != 0)
             {
                 Resume resume = manager.GetResume();
-                resume.Careers.RemoveAt((int)listView3.SelectedItems[0].Tag);
+                resume.GetCareers().RemoveAt((int)listView3.SelectedItems[0].Tag);
                 manager.SetResume(resume);
                 LoadResume();
             }
@@ -244,11 +244,11 @@ namespace WindowsFormsApp1
             CareerDialog dialog = new CareerDialog();
             Resume resume = manager.GetResume();
             int selectedIndex = (int)listView3.SelectedItems[0].Tag;
-            dialog.Career = resume.Careers[selectedIndex];
+            dialog.SetCareer(resume.GetCareers()[selectedIndex]);
             DialogResult result = dialog.ShowDialog();
             if (result == DialogResult.OK)
             {
-                resume.Careers[selectedIndex] = dialog.Career;
+                resume.GetCareers()[selectedIndex] = dialog.GetCareer();
                 manager.SetResume(resume);
                 LoadResume();
             }

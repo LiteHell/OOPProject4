@@ -9,19 +9,43 @@ namespace WindowsFormsApp1.Data
     [Serializable]
     public class SelfIntroductionQuestion
     {
+        private string question;
+        private string answer;
+
         public SelfIntroductionQuestion()
         {
-            Question = "";
-            Answer = "";
+            SetQuestion("");
+            SetAnswer("");
         }
         public SelfIntroductionQuestion(SelfIntroductionQuestion question)
         {
-            Question = question.Question;
-            Answer = question.Answer;
+            SetQuestion(question.GetQuestion());
+            SetAnswer(question.GetAnswer());
         }
-        public string Question { get; set; }
-        public string Answer { get; set; }
-        public int GetLength() { return Answer.Length; }
+
+
+        public string GetQuestion()
+        {
+            return question;
+        }
+
+        public void SetQuestion(string value)
+        {
+            question = value;
+        }
+
+
+        public string GetAnswer()
+        {
+            return answer;
+        }
+
+        public void SetAnswer(string value)
+        {
+            answer = value;
+        }
+
+        public int GetLength() { return GetAnswer().Length; }
     }
     [Serializable]
     public class SelfIntroduction

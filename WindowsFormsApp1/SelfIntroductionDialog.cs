@@ -14,19 +14,41 @@ namespace WindowsFormsApp1
     public partial class SelfIntroductionDialog : Form
     {
         public event EventHandler OnFileRenamedOrDeleted;
-        public string SelfIntroductionName { get; set; }
-        public SelfIntroductionManager SelfIntroductionManager { get; set; }
+        private string selfIntroductionName;
+        private SelfIntroductionManager selfIntroductionManager;
+
+        public string GetSelfIntroductionName()
+        {
+            return selfIntroductionName;
+        }
+
+        public void SetSelfIntroductionName(string value)
+        {
+            selfIntroductionName = value;
+        }
+
+
+        public SelfIntroductionManager GetSelfIntroductionManager()
+        {
+            return selfIntroductionManager;
+        }
+
+        public void SetSelfIntroductionManager(SelfIntroductionManager value)
+        {
+            selfIntroductionManager = value;
+        }
+
         public SelfIntroductionDialog(string name, SelfIntroductionManager manager)
         {
-            this.SelfIntroductionName = name;
-            this.SelfIntroductionManager = manager;
+            this.SetSelfIntroductionName(name);
+            this.SetSelfIntroductionManager(manager);
             InitializeComponent();
-            this.Text = "자기소개서 - " + this.SelfIntroductionName;
+            this.Text = "자기소개서 - " + this.GetSelfIntroductionName();
             loadIntroductions();
         }
         private void loadIntroductions()
         {
-            Data.SelfIntroduction data = SelfIntroductionManager.GetSelfIntroduction(SelfIntroductionName);
+            Data.SelfIntroduction data = GetSelfIntroductionManager().GetSelfIntroduction(GetSelfIntroductionName());
             tabControl1.SuspendLayout();
             tabControl1.Controls.Clear();
             for (int i = 0; i < data.Questions.Count; i++)
@@ -62,7 +84,7 @@ namespace WindowsFormsApp1
             countLabel.Name = "countLabel";
             countLabel.Size = new System.Drawing.Size(87, 12);
             countLabel.TabIndex = 0;
-            countLabel.Text = "현재 글자수 : " + question.Answer.Length;
+            countLabel.Text = "현재 글자수 : " + question.GetAnswer().Length;
 
             // 
             // 텍스트박스와 패널 변수 선언
@@ -95,7 +117,7 @@ namespace WindowsFormsApp1
             questionTextBox.Name = "questionTextBox";
             questionTextBox.Size = new System.Drawing.Size(600, 48);
             questionTextBox.TabIndex = 1;
-            questionTextBox.Text = question.Question;
+            questionTextBox.Text = question.GetQuestion();
             questionTextBox.Tag = questionIndex;
             questionTextBox.TextChanged += OnQuestionTextChanged;
 
@@ -109,7 +131,7 @@ namespace WindowsFormsApp1
             answerTextBox.Name = "answerTextBox";
             answerTextBox.Size = new System.Drawing.Size(600, 367);
             answerTextBox.TabIndex = 2;
-            answerTextBox.Text = question.Answer;
+            answerTextBox.Text = question.GetAnswer();
             answerTextBox.Tag = questionIndex;
             answerTextBox.TextChanged += OnAnswerTextChanged;
 
@@ -132,17 +154,17 @@ namespace WindowsFormsApp1
         private void OnQuestionTextChanged(object sender, EventArgs e)
         {
             int questionIndex = (int)(sender as Control).Tag;
-            Data.SelfIntroduction selfIntroduction = SelfIntroductionManager.GetSelfIntroduction(SelfIntroductionName);
-            selfIntroduction.Questions[questionIndex].Question = (sender as TextBox).Text;
-            SelfIntroductionManager.SaveSelfIntroduction(SelfIntroductionName, selfIntroduction);
+            Data.SelfIntroduction selfIntroduction = GetSelfIntroductionManager().GetSelfIntroduction(GetSelfIntroductionName());
+            selfIntroduction.Questions[questionIndex].SetQuestion((sender as TextBox).Text);
+            GetSelfIntroductionManager().SaveSelfIntroduction(GetSelfIntroductionName(), selfIntroduction);
         }
         private void OnAnswerTextChanged(object sender, EventArgs e)
         {
             int questionIndex = (int)(sender as Control).Tag;
-            Data.SelfIntroduction selfIntroduction = SelfIntroductionManager.GetSelfIntroduction(SelfIntroductionName);
-            selfIntroduction.Questions[questionIndex].Answer = (sender as TextBox).Text;
-            (sender as Control).Parent.Controls["countLabel"].Text = "현재 글자수 : " + selfIntroduction.Questions[questionIndex].Answer.Length;
-            SelfIntroductionManager.SaveSelfIntroduction(SelfIntroductionName, selfIntroduction);
+            Data.SelfIntroduction selfIntroduction = GetSelfIntroductionManager().GetSelfIntroduction(GetSelfIntroductionName());
+            selfIntroduction.Questions[questionIndex].SetAnswer((sender as TextBox).Text);
+            (sender as Control).Parent.Controls["countLabel"].Text = "현재 글자수 : " + selfIntroduction.Questions[questionIndex].GetAnswer().Length;
+            GetSelfIntroductionManager().SaveSelfIntroduction(GetSelfIntroductionName(), selfIntroduction);
         }
 
         private void menuBtn_renameSelfIntroduction_Click(object sender, EventArgs e)
@@ -151,17 +173,17 @@ namespace WindowsFormsApp1
             inputBox.SetDescription("새로운 이름을 입력하세요.");
             if (inputBox.ShowDialog() == DialogResult.OK)
             {
-                if (SelfIntroductionManager.GetSelfIntroductionNames().Contains(inputBox.Result))
+                if (GetSelfIntroductionManager().GetSelfIntroductionNames().Contains(inputBox.GetResult()))
                 {
                     MessageBox.Show("이미 존재하는 이름입니다.");
                     return;
                 }
-                Data.SelfIntroduction selfIntroduction = SelfIntroductionManager.GetSelfIntroduction(SelfIntroductionName);
-                SelfIntroductionManager.DeleteSelfIntroduction(SelfIntroductionName);
-                SelfIntroductionName = inputBox.Result;
-                SelfIntroductionManager.SaveSelfIntroduction(SelfIntroductionName, selfIntroduction);
+                Data.SelfIntroduction selfIntroduction = GetSelfIntroductionManager().GetSelfIntroduction(GetSelfIntroductionName());
+                GetSelfIntroductionManager().DeleteSelfIntroduction(GetSelfIntroductionName());
+                SetSelfIntroductionName(inputBox.GetResult());
+                GetSelfIntroductionManager().SaveSelfIntroduction(GetSelfIntroductionName(), selfIntroduction);
                 OnFileRenamedOrDeleted(this, new EventArgs());
-                this.Text = "자기소개서 - " + this.SelfIntroductionName;
+                this.Text = "자기소개서 - " + this.GetSelfIntroductionName();
             }
         }
 
@@ -172,16 +194,16 @@ namespace WindowsFormsApp1
             inputBox.SetDescription("새로운 이름을 입력하세요.");
             if (inputBox.ShowDialog() == DialogResult.OK)
             {
-                if (SelfIntroductionManager.GetSelfIntroductionNames().Contains(inputBox.Result))
+                if (GetSelfIntroductionManager().GetSelfIntroductionNames().Contains(inputBox.GetResult()))
                 {
                     MessageBox.Show("이미 존재하는 이름입니다.");
                     return;
                 }
-                Data.SelfIntroduction selfIntroduction = SelfIntroductionManager.GetSelfIntroduction(SelfIntroductionName);
-                SelfIntroductionManager.SaveSelfIntroduction(inputBox.Result, selfIntroduction);
+                Data.SelfIntroduction selfIntroduction = GetSelfIntroductionManager().GetSelfIntroduction(GetSelfIntroductionName());
+                GetSelfIntroductionManager().SaveSelfIntroduction(inputBox.GetResult(), selfIntroduction);
                 OnFileRenamedOrDeleted(this, new EventArgs());
 
-                SelfIntroductionDialog dialog = new SelfIntroductionDialog(inputBox.Result, SelfIntroductionManager);
+                SelfIntroductionDialog dialog = new SelfIntroductionDialog(inputBox.GetResult(), GetSelfIntroductionManager());
                 dialog.MdiParent = this.MdiParent;
                 dialog.Show();
             }
@@ -191,7 +213,7 @@ namespace WindowsFormsApp1
         {
             if (MessageBox.Show("정말로 이 자기소개서를 삭제하시겠습니까?", "확인", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                SelfIntroductionManager.DeleteSelfIntroduction(SelfIntroductionName);
+                GetSelfIntroductionManager().DeleteSelfIntroduction(GetSelfIntroductionName());
                 OnFileRenamedOrDeleted(this, new EventArgs());
                 this.Close();
             }
@@ -205,11 +227,11 @@ namespace WindowsFormsApp1
             if (tabIndexToSelect < 0) tabIndexToSelect = 0;
             if (MessageBox.Show("정말로 이 " + (questionIndex + 1) + "번 질문을 삭제하시겠습니까?", "확인", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                Data.SelfIntroduction selfIntroduction = SelfIntroductionManager.GetSelfIntroduction(SelfIntroductionName);
+                Data.SelfIntroduction selfIntroduction = GetSelfIntroductionManager().GetSelfIntroduction(GetSelfIntroductionName());
                 selfIntroduction.Questions.RemoveAt(questionIndex);
                 if (selfIntroduction.Questions.Count == 0)
                     selfIntroduction.Questions.Add(new Data.SelfIntroductionQuestion());
-                SelfIntroductionManager.SaveSelfIntroduction(SelfIntroductionName, selfIntroduction);
+                GetSelfIntroductionManager().SaveSelfIntroduction(GetSelfIntroductionName(), selfIntroduction);
                 loadIntroductions();
                 tabControl1.SelectTab(tabIndexToSelect);
             }
@@ -217,9 +239,9 @@ namespace WindowsFormsApp1
 
         private void menuBtn_addQuestion_Click(object sender, EventArgs e)
         {
-            Data.SelfIntroduction selfIntroduction = SelfIntroductionManager.GetSelfIntroduction(SelfIntroductionName);
+            Data.SelfIntroduction selfIntroduction = GetSelfIntroductionManager().GetSelfIntroduction(GetSelfIntroductionName());
             selfIntroduction.Questions.Add(new Data.SelfIntroductionQuestion());
-            SelfIntroductionManager.SaveSelfIntroduction(SelfIntroductionName, selfIntroduction);
+            GetSelfIntroductionManager().SaveSelfIntroduction(GetSelfIntroductionName(), selfIntroduction);
             loadIntroductions();
             tabControl1.SelectTab(tabControl1.TabCount - 1);
         }
@@ -228,9 +250,9 @@ namespace WindowsFormsApp1
         {
             TabPage page = tabControl1.SelectedTab;
             int questionIndex = (int)page.Tag;
-            Data.SelfIntroduction selfIntroduction = SelfIntroductionManager.GetSelfIntroduction(SelfIntroductionName);
+            Data.SelfIntroduction selfIntroduction = GetSelfIntroductionManager().GetSelfIntroduction(GetSelfIntroductionName());
             selfIntroduction.Questions.Add(new Data.SelfIntroductionQuestion(selfIntroduction.Questions[questionIndex]));
-            SelfIntroductionManager.SaveSelfIntroduction(SelfIntroductionName, selfIntroduction);
+            GetSelfIntroductionManager().SaveSelfIntroduction(GetSelfIntroductionName(), selfIntroduction);
             loadIntroductions();
             tabControl1.SelectTab(tabControl1.TabCount - 1);
         }
@@ -247,14 +269,14 @@ namespace WindowsFormsApp1
                 {
                     StringBuilder sb = new StringBuilder();
 
-                    Data.SelfIntroduction selfIntroduction = SelfIntroductionManager.GetSelfIntroduction(SelfIntroductionName);
+                    Data.SelfIntroduction selfIntroduction = GetSelfIntroductionManager().GetSelfIntroduction(GetSelfIntroductionName());
                     foreach (Data.SelfIntroductionQuestion i in selfIntroduction.Questions)
                     {
-                        sb.AppendLine("질문 : " + i.Question);
+                        sb.AppendLine("질문 : " + i.GetQuestion());
                         sb.AppendLine();
-                        sb.AppendLine("답변 (글자수 : " + i.Answer.Length + ") : ");
+                        sb.AppendLine("답변 (글자수 : " + i.GetAnswer().Length + ") : ");
                         sb.AppendLine();
-                        sb.AppendLine(i.Answer);
+                        sb.AppendLine(i.GetAnswer());
                         sb.AppendLine();
                         sb.AppendLine("============================");
                     }

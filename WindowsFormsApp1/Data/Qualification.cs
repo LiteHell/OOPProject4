@@ -9,16 +9,70 @@ namespace WindowsFormsApp1.Data
     [Serializable]
     public class Qualification
     {
+        private string name;
+        private string awardingInstitution;
+        private DateTime acquisitiedAt;
+        private DateTime validUntil;
+        private bool validForever;
         public Qualification()
         {
-            AcquisitiedAt = DateTime.Now;
-            ValidUntil = DateTime.Now;
+            SetAcquisitiedAt(DateTime.Now);
+            SetValidUntil(DateTime.Now);
 
         }
-        public string Name { get; set; }
-        public string AwardingInstitution { get; set; }
-        public DateTime AcquisitiedAt { get; set; }
-        public DateTime ValidUntil { get; set; }
-        public bool ValidForever { get; set; }
+
+
+        public string GetName()
+        {
+            return name;
+        }
+
+        public void SetName(string value)
+        {
+            name = value;
+        }
+
+
+        public string GetAwardingInstitution()
+        {
+            return awardingInstitution;
+        }
+
+        public void SetAwardingInstitution(string value)
+        {
+            awardingInstitution = value;
+        }
+
+
+        public DateTime GetAcquisitiedAt()
+        {
+            return acquisitiedAt;
+        }
+
+        public void SetAcquisitiedAt(DateTime value)
+        {
+            acquisitiedAt = value;
+        }
+
+
+        public DateTime GetValidUntil()
+        {
+            return validUntil;
+        }
+
+        public void SetValidUntil(DateTime value)
+        {
+            validUntil = value;
+        }
+
+        public bool GetValidForever()
+        {
+            return validForever;
+        }
+
+        public void SetValidForever(bool value)
+        {
+            validForever = value;
+        }
     }
 }

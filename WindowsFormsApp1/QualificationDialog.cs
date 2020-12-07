@@ -12,30 +12,41 @@ namespace WindowsFormsApp1
 {
     public partial class QualificationDialog : Form
     {
-        public Data.Qualification Qualification { get; set; }
+        private Data.Qualification qualification;
+
+        public Data.Qualification GetQualification()
+        {
+            return qualification;
+        }
+
+        public void SetQualification(Data.Qualification value)
+        {
+            qualification = value;
+        }
+
         public QualificationDialog()
         {
             InitializeComponent();
-            Qualification = new Data.Qualification();
+            SetQualification(new Data.Qualification());
             this.Shown += QualificationDialog_Shown;
         }
 
         private void QualificationDialog_Shown(object sender, EventArgs e)
         {
-            txt_name.Text = Qualification.Name;
-            txt_institution.Text = Qualification.AwardingInstitution;
-            dateTime_acquired.Value = Qualification.AcquisitiedAt;
-            dateTime_validUntil.Value = Qualification.ValidUntil;
-            check_validForever.Checked = Qualification.ValidForever;
+            txt_name.Text = GetQualification().GetName();
+            txt_institution.Text = GetQualification().GetAwardingInstitution();
+            dateTime_acquired.Value = GetQualification().GetAcquisitiedAt();
+            dateTime_validUntil.Value = GetQualification().GetValidUntil();
+            check_validForever.Checked = GetQualification().GetValidForever();
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Qualification.Name = txt_name.Text;
-            Qualification.AwardingInstitution = txt_institution.Text;
-            Qualification.AcquisitiedAt = dateTime_acquired.Value;
-            Qualification.ValidUntil = dateTime_validUntil.Value;
-            Qualification.ValidForever = check_validForever.Checked;
+            GetQualification().SetName(txt_name.Text);
+            GetQualification().SetAwardingInstitution(txt_institution.Text);
+            GetQualification().SetAcquisitiedAt(dateTime_acquired.Value);
+            GetQualification().SetValidUntil(dateTime_validUntil.Value);
+            GetQualification().SetValidForever(check_validForever.Checked);
             this.DialogResult = DialogResult.OK;
             this.Close();
         }

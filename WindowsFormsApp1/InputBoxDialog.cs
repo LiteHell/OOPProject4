@@ -12,7 +12,18 @@ namespace WindowsFormsApp1
 {
     public partial class InputBoxDialog : Form
     {
-        public string Result { get; set; }
+        private string result;
+
+        public string GetResult()
+        {
+            return result;
+        }
+
+        public void SetResult(string value)
+        {
+            result = value;
+        }
+
         public void SetDescription(string description)
         {
             label_description.Text = description;
@@ -25,7 +36,7 @@ namespace WindowsFormsApp1
         private void btn_Ok_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
-            Result = txt_Result.Text;
+            SetResult(txt_Result.Text);
             this.Close();
         }
 
