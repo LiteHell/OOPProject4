@@ -45,7 +45,8 @@ namespace WindowsFormsApp1
             InitializeComponent();
             this.Text = "자기소개서 - " + this.GetSelfIntroductionName();
             loadIntroductions();
-        }
+            OnFileRenamedOrDeleted += (object sender, EventArgs e) => { };
+         }
         private void loadIntroductions()
         {
             Data.SelfIntroduction data = GetSelfIntroductionManager().GetSelfIntroduction(GetSelfIntroductionName());
@@ -204,6 +205,7 @@ namespace WindowsFormsApp1
                 OnFileRenamedOrDeleted(this, new EventArgs());
 
                 SelfIntroductionDialog dialog = new SelfIntroductionDialog(inputBox.GetResult(), GetSelfIntroductionManager());
+                dialog.OnFileRenamedOrDeleted += OnFileRenamedOrDeleted;
                 dialog.MdiParent = this.MdiParent;
                 dialog.Show();
             }

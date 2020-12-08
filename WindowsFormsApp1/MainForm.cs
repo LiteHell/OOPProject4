@@ -102,6 +102,7 @@ namespace WindowsFormsApp1
                 refreshSelfIntroductionToolStrip();
 
                 SelfIntroductionDialog dialog = new SelfIntroductionDialog(name, selfIntroductionManager);
+                dialog.OnFileRenamedOrDeleted += OnSelfIntroductionFileChanged;
                 dialog.MdiParent = this;
                 dialog.Show();
             }
